@@ -2,7 +2,6 @@ package main.scala.database
 
 import java.io.{BufferedWriter, File, FileWriter}
 
-import main.scala.utils.Converter
 import main.scala.utils.Converter.createEntity
 
 object DistribDB {
@@ -21,62 +20,30 @@ entity XService {
   private val relations: String =
     s"""
        |relationship OneToOne {
-       | 	Group{refPartner} to Partners
-       | 	RightsList{refPartner} to Partners
-       | 	RightsListServices{refPartner} to Partners
-       | 	Agencies{refPartner} to Partners
-       | 	Partner_UID{refPartner} to Partners
-       | 	Partner_HW{refPartner} to Partners
+       | 	T_ConfederationPersonnePhysique{IdPersonnePhysique} to T_PersonnePhysique
+       | 	T_PointDeVente_PersonnePhysique{IdPersonnePhysique} to T_PersonnePhysique
        |}
        |
       |relationship OneToOne {
-       | 	AgencySession{RefAgency} to Agencies
-       | 	Agencies_Allowed_IP{refAgency} to Agencies
-       | 	AgencyService{refAgency} to Agencies
-       | 	Agencies_SIG{refAgency} to Agencies
-       | 	Agencies_IP{refAgency} to Agencies
-       | 	Agency_Hardware{refAgency} to Agencies
-       | 	Agency_UID{refAgency} to Agencies
-       | 	UserSession{refAgency} to Agencies
+       | 	T_AlerteAction{IdAlerte} to T_Alerte
        |}
        |
        |relationship OneToOne {
-       | 	Partner_UID{refUser} to User
-       | 	Agency_UID{refUser} to User
-       | 	Agency_UID{refUserParent} to User
-       | 	Forbidden_UID{refUser} to User
-       | 	UID_Picture{refUser} to User
-       | 	UserSession{refUser} to User
-       |}
-       |
-      |relationship OneToOne {
-       | 	RightsListServices{rightsList} to RightsList
+       | 	T_AlerteAction{idAction} to T_Action
        |}
        |
  |relationship OneToOne {
-       | 	Rights_Label{RefService} to XService
-       | 	Rights{RefService} to XService
-       | 	RightsListServices{RefService} to XService
-       | 	AgencyService{RefService} to XService
+       | 	T_Agrement{IdPdv} to T_PointDeVente
+       | 	T_PointDeVente_PersonnePhysique{IdPointDeVente} to T_PointDeVente
+       | 	T_DelegationPointDeVente{IdPointDeVente} to T_PointDeVente
+       | 	T_HorairesPointDeVente{IdPointDeVente} to T_PointDeVente
+       | 	T_InfosPointDeVente{IdPointDeVente} to T_PointDeVente
        |}
        |
  |relationship OneToOne {
-       |    GroupElement{refGroup} to Group
+       |    T_Agrement{IdStatut} to T_StatutAgrement
        |}
        |
- |relationship OneToOne {
-       |    Group{RefEntity} to Entity
-       |}
-       |
-      |relationship OneToOne {
-       |    ListType_Label{RefTypeListe} to ListType
-       |}
-       |
-      |relationship OneToOne {
-       | 	Rights_Label{refAction} to XAction
-       | 	RightsListServices{refAction} to XAction
-       | 	Rights{refAction} to XAction
-       |}
     """.stripMargin
 
   private val kycSql: String =
@@ -295,7 +262,7 @@ entity XService {
     bw.write(createEntity(posSql, "agrement"))
     bw.write(createEntity(kycSql, "KYC"))
    // bw.write(unknownEntity)
-   // bw.write(relations)
+    bw.write(relations)
     bw.close()
   }
 }
