@@ -1,0 +1,283 @@
+
+entity Agencies {
+	refAgency Integer
+	refPartner Integer required
+	AgencyID String
+	PartnerAgencyID String
+	ExternalID String
+	CustomsCode String
+	SIRET String
+	AgencyName String
+	AgencyName2 String
+	ManagerFirstName String
+	ManagerLastName String
+	Address String
+	City String
+	Zip String
+	Area String
+	ISO2Country String
+	PhoneNumber String
+	Mobile String
+	Fax String
+	Email String
+	Login String
+	Password String
+	Free1 String
+	Free2 String
+	GMTOffset Integer
+	refRightList Integer
+	isBackOffice Boolean
+	isDeleted Boolean
+	PasswordCheck String
+	NbTry Integer
+	NbUnsuccessfullTry Integer
+	LastUnsuccessfullTry Instant
+	OpenHour String
+	CloseHour String
+	LockedDate Instant
+	LastSuccessfullTry Instant
+	NbUnlockedPer24h Integer
+	CreationDate Instant
+	PassageJourConf String
+	iRefLeadingAgency Integer
+}
+
+
+entity Agencies_Allowed_IP {
+	refIPAddress Integer
+	refAgency Integer required
+	IPAddress String
+	IPaddressMin String
+	IPaddressMax String
+	IPAddressStart String
+	CountryCode String
+	ISP String
+	REGION String
+}
+
+entity Agencies_IP {
+	refAgency Integer required
+	IPAddress String required
+	LastDate Instant
+	AuthenticationMode String
+	ServerName String
+}
+
+entity Agencies_SIG {
+	refAgency Integer required
+	Latitude String
+	Longitude String
+}
+
+
+
+entity AgencyService {
+	RefAgency Integer
+	RefService Integer
+}
+
+entity AgencySession {
+	Token String required
+	StartDate Instant
+	LastUsedDate Instant
+	RefAgency Integer
+	IPAddress String
+	AccessType String
+	WebServer String
+	CookieActivated Boolean
+}
+
+
+entity Agency_Hardware {
+	refAgency Integer required
+	refHardware Integer required
+	HardwareType String
+	refRightList Integer
+}
+
+entity Agency_UID {
+	refAgency Integer required
+	refUser Integer required
+	RefRightList Integer
+	refUserParent Integer
+	refHardwareParent Integer
+	CreationDate Instant
+	ExcludePOS Boolean
+	isSubstitute Boolean
+	SubstituteEndDate Instant
+}
+entity Partner_HW {
+	refPartner Integer required
+	refHardware Integer required
+	refRightList Integer
+	HardwareType String
+}
+
+entity Partner_UID {
+	refPartner Integer required
+	refUser Integer required
+	refRightList Integer required
+	NickName String
+}
+
+entity Partners {
+	refPartner Integer
+	PartnerName String
+	PartnerIdentifier String
+	refRightList Integer
+}
+
+entity Entity {
+	refEntity Integer
+	EntityLabel String
+}
+
+
+entity Forbidden_UID {
+	refHardware Integer
+	refUser Integer
+}
+
+entity Group {
+	refGroup Integer
+	refPartner Integer
+	RefEntity Integer
+	Label String
+	Description String
+}
+
+entity GroupElement {
+	refGroup Integer
+	RefElement Integer
+}
+
+entity ListType {
+	RefTypeListe Integer
+	TypeListName String
+	TypeListDescription String
+}
+
+entity ListType_Label {
+	RefTypeListe Integer required
+	RefLang String required
+	ListTypeLabel String
+}
+
+
+entity Rights {
+	refService Integer required
+	refAction Integer required
+	TAGAction String
+	ActionDescription String
+}
+
+entity RightsList {
+	refRightList Integer
+	RefListType Integer
+	RefPartner Integer
+	Description String
+	TAG String
+}
+
+entity RightsListServices {
+	refRightList Integer required
+	refPartner Integer
+	refService Integer required
+	refAction Integer required
+}
+
+entity Rights_Label {
+	refService Integer required
+	refAction Integer required
+	refLang Integer required
+	Label String
+}
+
+entity T_LeadingAgencies {
+	iRefLeadingAgency Integer
+	sLeadingAgencyName String required
+	sLeadingAgencyBankReference String required
+	sDescription String
+}
+
+entity UID_Picture {
+	refUser Integer required
+	Picture String
+	LastRefreshDate Instant
+}
+
+entity UserSession {
+	Token String required
+	EndDate Instant
+	RefUser Integer
+	RefAgency Integer
+	RefHardware Integer
+}
+  
+entity User {
+	RefUser Integer
+}
+entity XAction {
+	refAction Integer
+}
+entity XService {
+	RefService Integer
+}
+relationship OneToOne {
+ 	Group{refPartner} to Partners
+ 	RightsList{refPartner} to Partners
+ 	RightsListServices{refPartner} to Partners
+ 	Agencies{refPartner} to Partners
+ 	Partner_UID{refPartner} to Partners
+ 	Partner_HW{refPartner} to Partners
+}
+
+relationship OneToOne {
+ 	AgencySession{RefAgency} to Agencies
+ 	Agencies_Allowed_IP{refAgency} to Agencies
+ 	AgencyService{refAgency} to Agencies
+ 	Agencies_SIG{refAgency} to Agencies
+ 	Agencies_IP{refAgency} to Agencies
+ 	Agency_Hardware{refAgency} to Agencies
+ 	Agency_UID{refAgency} to Agencies
+ 	UserSession{refAgency} to Agencies
+}
+
+relationship OneToOne {
+ 	Partner_UID{refUser} to User
+ 	Agency_UID{refUser} to User
+ 	Agency_UID{refUserParent} to User
+ 	Forbidden_UID{refUser} to User
+ 	UID_Picture{refUser} to User
+ 	UserSession{refUser} to User
+}
+
+relationship OneToOne {
+ 	RightsListServices{rightsList} to RightsList
+}
+
+relationship OneToOne {
+ 	Rights_Label{RefService} to XService
+ 	Rights{RefService} to XService
+ 	RightsListServices{RefService} to XService
+ 	AgencyService{RefService} to XService
+}
+
+relationship OneToOne {
+    GroupElement{refGroup} to Group
+}
+
+relationship OneToOne {
+    Group{RefEntity} to Entity
+}
+
+relationship OneToOne {
+    ListType_Label{RefTypeListe} to ListType
+}
+
+relationship OneToOne {
+ 	Rights_Label{refAction} to XAction
+ 	RightsListServices{refAction} to XAction
+ 	Rights{refAction} to XAction
+}
+    
