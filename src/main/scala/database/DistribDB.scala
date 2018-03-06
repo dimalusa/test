@@ -303,7 +303,7 @@ entity XService {
      """.stripMargin
 
   def compute(): Unit = {
-    val file = new File("distributionJDL.txt")
+    val file = new File("./src/main/resources/generated/distributionJDL.txt")
     val bw = new BufferedWriter(new FileWriter(file))
     bw.write(createEntity(posSql, "agrement"))
     bw.write(createEntity(kycSql, "KYC"))

@@ -394,7 +394,7 @@ entity XService {
 
   def compute(): Unit = {
   // FileWriter
-  val file = new File("partnerJDL.txt")
+  val file = new File("./src/main/resources/generated/partnerJDL.txt")
   val bw = new BufferedWriter(new FileWriter(file))
   bw.write(createEntity(agenciesSql, "Partner"))
   bw.write(createEntity(partnersSql, "Partner"))
