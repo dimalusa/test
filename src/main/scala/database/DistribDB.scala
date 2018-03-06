@@ -147,19 +147,6 @@ entity XService {
        |)
        |go
        |
- |create table agrement.T_Agrement_tmp
-       |(
-       |	IdAgrement int not null,
-       |	IdStatut int not null,
-       |	IdPdv int not null,
-       |	DateCreation datetime not null,
-       |	DateModification datetime,
-       |	IsImport bit,
-       |	constraint PK_T_Agrement_tmp
-       |		primary key (IdAgrement, IdPdv)
-       |)
-       |go
-       |
  |create table agrement.T_Challenge
        |(
        |	RefChallenge int identity
