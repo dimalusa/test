@@ -3,7 +3,7 @@ package main.scala.database
 import java.io.{BufferedWriter, File, FileWriter}
 
 import main.scala.utils.Converter
-import main.scala.utils.Converter.createEntity
+import main.scala.utils.Converter.{createEntity, getFile}
 
 
 object PartnerDB {
@@ -393,14 +393,13 @@ entity XService {
 
 
   def compute(): Unit = {
-  // FileWriter
-  val file = new File("./src/main/resources/generated/partnerJDL.txt")
-  val bw = new BufferedWriter(new FileWriter(file))
-  bw.write(createEntity(agenciesSql, "Partner"))
-  bw.write(createEntity(partnersSql, "Partner"))
-  bw.write(unknownEntity)
-  bw.write(relations)
-  bw.close()
+    val file = getFile("partnerJDL")
+    val bw = new BufferedWriter(new FileWriter(file))
+    bw.write(createEntity(agenciesSql, "Partner"))
+    bw.write(createEntity(partnersSql, "Partner"))
+    bw.write(unknownEntity)
+    bw.write(relations)
+    bw.close()
 }
 }
 

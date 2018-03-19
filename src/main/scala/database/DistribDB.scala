@@ -2,7 +2,7 @@ package main.scala.database
 
 import java.io.{BufferedWriter, File, FileWriter}
 
-import main.scala.utils.Converter.createEntity
+import main.scala.utils.Converter.{createEntity, getFile}
 
 object DistribDB {
 
@@ -257,7 +257,7 @@ entity XService {
      """.stripMargin
 
   def compute(): Unit = {
-    val file = new File("./src/main/resources/generated/distributionJDL.txt")
+    val file = getFile("distributionJDL")
     val bw = new BufferedWriter(new FileWriter(file))
     bw.write(createEntity(posSql, "agrement"))
     bw.write(createEntity(kycSql, "KYC"))
