@@ -1,11 +1,11 @@
 package main.scala
 
-import database.{BankSiDBLight, PartnerDB, StoreLocatorDB}
+import database.{BankSiDBLight, PartnerDB, FormationDB}
 
 object Main extends App {
 
   PartnerDB.compute()
-  StoreLocatorDB.compute()
+  FormationDB.compute()
   BankSiDBLight.compute()
 }
 
