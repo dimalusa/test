@@ -2,7 +2,7 @@ package main.scala.database
 
 import java.io.{BufferedWriter, FileWriter}
 
-import main.scala.utils.Converter.{createEntity, getFile}
+import main.scala.utils.Converter.{createEntityFromSQLServer, getFile}
 
 
 object BankSiDB {
@@ -1816,10 +1816,10 @@ object BankSiDB {
   def compute(): Unit = {
     val file = getFile("bankSiJDL")
     val bw = new BufferedWriter(new FileWriter(file))
-    bw.write(createEntity(bankSiSql, "BankSI"))
-    bw.write(createEntity(bankSiSql2, "BankSI"))
-    bw.write(createEntity(d3, "BankSI"))
-   // bw.write(createEntity(missingSql, "BankSI"))
+    bw.write(createEntityFromSQLServer(bankSiSql, "BankSI"))
+    bw.write(createEntityFromSQLServer(bankSiSql2, "BankSI"))
+    bw.write(createEntityFromSQLServer(d3, "BankSI"))
+   // bw.write(createEntityFromSQLServer(missingSql, "BankSI"))
     bw.write(relations)
     bw.close()
 }

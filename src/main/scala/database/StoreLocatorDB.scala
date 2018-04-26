@@ -2,46 +2,88 @@ package main.scala.database
 
 import java.io.{BufferedWriter, FileWriter}
 
-import main.scala.utils.Converter.{createEntity, getFile}
+import main.scala.utils.Converter.{createEntityFromPostgres, getFile}
 
 object StoreLocatorDB {
 
   private val storeLocatorSql: String =
     s"""
-       |CREATE TABLE web.StoreLocatorPOS
-       |(
-       |  ref            INT           IDENTITY
-       |    CONSTRAINT PK_StoreLocatorPOS
-       |    PRIMARY KEY,
-       |  AgencyName     VARCHAR(100) NOT NULL,
-       |  Label1         VARCHAR(100),
-       |  Address        VARCHAR(100),
-       |  Zip            VARCHAR(50),
-       |  City           VARCHAR(50),
-       |  Area           VARCHAR(50),
-       |  Latitude       VARCHAR(50),
-       |  Longitude      VARCHAR(50),
-       |  FreeLabel1     VARCHAR(200),
-       |  CreationDate   SMALLDATETIME DEFAULT getutcdate(),
-       |  Certified      BIT           DEFAULT 0,
-       |  SearchLocation BIT,
-       |  IsVisible      BIT           DEFAULT 0,
-       |  idePDVSAB      VARCHAR(20),
-       |  NbCitizens     INT,
-       |  CitizenRange   INT,
-       |  IsMPAD         BIT,
-       |  PhoneNumber    VARCHAR(200),
-       |  OpeningHours   VARCHAR(200)
-       |)
-       |GO
+       |CREATE Table PointOfSale (
+       |  id            INT PRIMARY KEY,
+       |  name          TEXT      NOT NULL,
+       |  businessName TEXT,
+       |  coordinates   GEOGRAPHY,
+       |  siret         TEXT,
+       |  description   TEXT,
+       |  createdAt    TIMESTAMP NOT NULL
+       |);
        |
+ |CREATE Table PointOfSaleTerminal (
+       |  id                INT PRIMARY KEY,
+       |  pointOfSaleId  INT       NOT NULL REFERENCES pointOfSale (id),
+       |  installationDate TIMESTAMP NOT NULL,
+       |  serialNumber     TEXT      NOT NULL,
+       |  lastConnexion    DATETIME
+       |);
+       |
+ |CREATE Table Service (
+       |  id    INT PRIMARY KEY,
+       |  type  TEXT NOT NULL,
+       |  label TEXT NOT NULL
+       |);
+       |
+ |CREATE Table PointOfSaleServices (
+       |  id               INT       NOT NULL,
+       |  pointOfSaleId INT REFERENCES pointOfSale (id),
+       |  serviceId       INT REFERENCES service (id),
+       |  createdAt       TIMESTAMP NOT NULL,
+       |  PRIMARY KEY (pointOfSaleId, serviceId)
+       |);
+       |
+ |CREATE Table Image (
+       |  id               INT PRIMARY KEY,
+       |  pointOfSaleId INT NOT NULL REFERENCES pointOfSale (id),
+       |  url              TEXT,
+       |  source           BINARY
+       |);
+       |
+ |CREATE Table Staff (
+       |  id                  INT PRIMARY KEY,
+       |  firstName          TEXT      NOT NULL,
+       |  lastName           TEXT      NOT NULL,
+       |  homePhoneNumber   TEXT,
+       |  mobilePhoneNumber TEXT,
+       |  about               TEXT,
+       |  createdAt          TIMESTAMP NOT NULL
+       |);
+       |
+ |CREATE Table PointOfSaleStaff (
+       |  id               INT       NOT NULL,
+       |  pointOfSaleId INT REFERENCES pointOfSale (id),
+       |  staffId         INT REFERENCES staff (id),
+       |  createdAt       TIMESTAMP NOT NULL,
+       |  PRIMARY KEY (pointOfSaleId, staffId)
+       |);
      """.stripMargin
+
+  private val relations =
+    s"""
+       |relationship ManyToOne {
+       | 	Image{pointOfSale} to PointOfSale{images}
+       | 	PointOfSaleTerminal{pointOfSale} to PointOfSale{posTerminals}
+       | 	PointOfSaleServices{associatedPointOfSale} to PointOfSale{services}
+       | 	PointOfSaleServices{service} to Service{ids}
+       | 	PointOfSaleStaff{pointOfSale} to PointOfSale{staffs}
+       | 	PointOfSaleStaff{staff} to Staff{ids}
+       |}
+    """.stripMargin
 
   def compute(): Unit = {
     val file = getFile("storelocatorJDL")
     val bw = new BufferedWriter(new FileWriter(file))
-    bw.write(createEntity(storeLocatorSql, "web"))
-    bw.write("paginate StoreLocatorPOS with pagination")
+    bw.write(createEntityFromPostgres(storeLocatorSql, ""))
+    // bw.write("paginate StoreLocatorPOS with pagination")
+     bw.write(relations)
     bw.close()
   }
 }

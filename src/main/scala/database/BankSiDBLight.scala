@@ -2,7 +2,7 @@ package main.scala.database
 
 import java.io.{BufferedWriter, FileWriter}
 
-import main.scala.utils.Converter.{createEntity, getFile}
+import main.scala.utils.Converter.{createEntityFromSQLServer, getFile}
 
 
 object BankSiDBLight {
@@ -72,8 +72,8 @@ object BankSiDBLight {
   def compute(): Unit = {
     val file = getFile("bankSiLightJDL")
     val bw = new BufferedWriter(new FileWriter(file))
-    bw.write(createEntity(bankSiSql, "BankSI"))
-   // bw.write(createEntity(missingSql, "BankSI"))
+    bw.write(createEntityFromSQLServer(bankSiSql, "BankSI"))
+   // bw.write(createEntityFromSQLServer(missingSql, "BankSI"))
     bw.write(relations)
     bw.close()
 }

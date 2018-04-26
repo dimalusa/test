@@ -12,7 +12,7 @@ object Converter {
     s"(?i)$reg"
   }
 
-  def createEntity(sql: String, prefix: String): String = {
+  def createEntityFromSQLServer(sql: String, prefix: String): String = {
     sql.replaceAll(regWithInsensitive("""nvarchar\(\d*\)"""), "String")
       .replaceAll(regWithInsensitive("""varchar\(\d*\)"""), "String")
       .replaceAll(regWithInsensitive("""varchar\(max\)"""), "String")
@@ -42,4 +42,38 @@ object Converter {
       .replaceAll(s"""$prefix[.]""", "")
   }
 
+  def createEntityFromPostgres(sql: String, prefix: String): String = {
+    sql.replaceAll(regWithInsensitive("""nvarchar\(\d*\)"""), "String")
+      .replaceAll(regWithInsensitive("""varchar\(\d*\)"""), "String")
+      .replaceAll(regWithInsensitive("""text"""), "String")
+      .replaceAll(regWithInsensitive("""varchar\(max\)"""), "String")
+      .replaceAll(regWithInsensitive("""nchar\(\d*\)"""), "String")
+      .replaceAll(regWithInsensitive("""GEOGRAPHY"""), "String")
+      .replaceAll(regWithInsensitive(""",(\n)"""), "$1")
+      .replaceAll(regWithInsensitive(""" identity"""), "")
+      .replaceAll(regWithInsensitive("""not null"""), "required")
+      .replaceAll(regWithInsensitive("""(\s*)references(.*)"""), "")
+      .replaceAll(regWithInsensitive("""(\s*)constraint(.*)"""), "")
+      .replaceAll(regWithInsensitive("""(\s*)primary key(.*)"""), "")
+      .replaceAll(regWithInsensitive("""not null"""), "required")
+      .replaceAll(regWithInsensitive("""binary"""), "AnyBlob")
+      .replaceAll(regWithInsensitive("""bit"""), "Boolean")
+      .replaceAll(regWithInsensitive(""" smalldatetime"""), " Instant")
+      .replaceAll(regWithInsensitive(""" datetime"""), " Instant")
+      .replaceAll(regWithInsensitive(""" timestamp"""), " Instant")
+      .replaceAll(regWithInsensitive(""" date"""), " Instant")
+      .replaceAll(regWithInsensitive(""" tinyint"""), " Instant")
+      .replaceAll(regWithInsensitive(""" time"""), " Instant")
+      .replaceAll(regWithInsensitive(""" default .*"""), "")
+      .replaceAll(regWithInsensitive(""" int"""), " Integer")
+      .replaceAll(regWithInsensitive(""" smallint"""), " Integer")
+      .replaceAll(regWithInsensitive(""" float"""), " Float")
+      .replaceAll(regWithInsensitive("""numeric.*"""), "Integer")
+      .replaceAll(regWithInsensitive("""money"""), "BigDecimal")
+      .replaceAll(regWithInsensitive("""varbinary\(\d*\)"""), "String")
+      .replaceAll(regWithInsensitive("""create\s*table(.*)\s[(]"""), "entity$1 {")
+      .replaceAll(regWithInsensitive("""[)];"""), "}")
+      .replaceAll(regWithInsensitive("""[)];"""), "}")
+      .replaceAll(s"""$prefix[.]""", "")
+  }
 }

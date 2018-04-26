@@ -2,7 +2,7 @@ package main.scala.database
 
 import java.io.{BufferedWriter, File, FileWriter}
 
-import main.scala.utils.Converter.{createEntity, getFile}
+import main.scala.utils.Converter.{createEntityFromSQLServer, getFile}
 
 object DistribDB {
 
@@ -259,8 +259,8 @@ entity XService {
   def compute(): Unit = {
     val file = getFile("distributionJDL")
     val bw = new BufferedWriter(new FileWriter(file))
-    bw.write(createEntity(posSql, "agrement"))
-    bw.write(createEntity(kycSql, "KYC"))
+    bw.write(createEntityFromSQLServer(posSql, "agrement"))
+    bw.write(createEntityFromSQLServer(kycSql, "KYC"))
    // bw.write(unknownEntity)
     bw.write(relations)
     bw.close()
