@@ -81,7 +81,7 @@ object FormationDB {
   def compute(): Unit = {
     val file = getFile("formationJDL")
     val bw = new BufferedWriter(new FileWriter(file))
-    bw.write(createEntityFromPostgres(storeLocatorSql, ""))
+    bw.write(createEntityFromPostgres(formationSql, ""))
     // bw.write("paginate StoreLocatorPOS with pagination")
      bw.write(relations)
     bw.close()
